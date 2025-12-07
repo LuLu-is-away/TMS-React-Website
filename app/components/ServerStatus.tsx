@@ -1,10 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { RefreshCw } from 'lucide-react'; // Example using lucide-react icons
+// If you haven't installed lucide-react, run: npm install lucide-react
+import { RefreshCw, Server, Map as MapIcon, Users } from 'lucide-react'; 
 
 interface ServerState {
-  status: 'Online' | 'Offline' | 'Private';
+  status: string;
   map: string;
   players: number;
   maxPlayers: number;
@@ -18,14 +19,11 @@ export default function ServerStatus() {
   const fetchStatus = async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/server-status', { 
-        cache: 'no-store' // Always fetch fresh data
-      });
-      const data: ServerState = await response.json();
+      const res = await fetch('/api/server-status');
+      const data = await res.json();
       setStatus(data);
     } catch (error) {
-      console.error('Failed to fetch server status:', error);
-      setStatus({ status: 'Offline', map: 'N/A', players: 0, maxPlayers: 0, name: 'Error' });
+      setStatus({ status: 'Offline', map: 'N/A', players: 0, maxPlayers: 0, name: 'Unreachable' });
     } finally {
       setLoading(false);
     }
@@ -33,53 +31,62 @@ export default function ServerStatus() {
 
   useEffect(() => {
     fetchStatus();
-    // Optional: Auto-refresh every 30 seconds
-    const intervalId = setInterval(fetchStatus, 30000); 
-    return () => clearInterval(intervalId);
+    const timer = setInterval(fetchStatus, 60000); // Auto-refresh every 60s
+    return () => clearInterval(timer);
   }, []);
 
-  const statusColor = status?.status === 'Online' ? 'bg-green-600' : 'bg-red-600';
-  const statusText = status?.status || 'Loading...';
+  const isOnline = status?.status === 'Online';
 
   return (
-    <div className="bg-zinc-900 p-4 rounded-lg border border-zinc-800 shadow-xl space-y-3">
-      <div className="flex justify-between items-center border-b border-zinc-800 pb-2">
-        <div className="flex items-center space-x-2">
-          <span className={`h-3 w-3 rounded-full ${statusColor}`}></span>
-          <h3 className="font-semibold text-lg text-white">Server Status: {statusText}</h3>
+    <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 shadow-2xl max-w-md w-full">
+      <div className="flex justify-between items-start mb-6">
+        <div>
+          <h2 className="text-xl font-bold text-white flex items-center gap-2">
+            <Server className="text-zinc-400" size={20} />
+            Server Status
+          </h2>
+          <div className={`mt-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+            isOnline ? 'bg-green-900/50 text-green-400' : 'bg-red-900/50 text-red-400'
+          }`}>
+            <span className={`w-2 h-2 mr-1.5 rounded-full ${isOnline ? 'bg-green-400' : 'bg-red-400'}`}></span>
+            {status?.status || 'Checking...'}
+          </div>
         </div>
         <button 
           onClick={fetchStatus} 
-          disabled={loading} 
-          className={`text-zinc-500 hover:text-white transition-colors p-1 rounded ${loading ? 'animate-spin' : ''}`}
-          title="Refresh Status"
+          disabled={loading}
+          className="p-2 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors"
         >
-          <RefreshCw size={16} />
+          <RefreshCw size={18} className={loading ? "animate-spin" : ""} />
         </button>
       </div>
 
-      {loading ? (
-        <p className="text-zinc-500">Querying server...</p>
-      ) : (
-        <div className="grid grid-cols-2 gap-3 text-sm">
-          <StatusItem label="Current Map" value={status?.map || 'N/A'} />
-          <StatusItem 
-            label="Players Online" 
-            value={`${status?.players} / ${status?.maxPlayers}`} 
-          />
-          <StatusItem label="Server Name" value={status?.name || 'N/A'} spanFull={true} />
+      {status && (
+        <div className="space-y-4">
+          <div className="bg-zinc-950/50 rounded-lg p-3 border border-zinc-800/50">
+             <p className="text-sm text-zinc-400 mb-1">Hostname</p>
+             <p className="font-medium text-white truncate">{status.name}</p>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-zinc-950/50 rounded-lg p-3 border border-zinc-800/50">
+              <div className="flex items-center gap-2 text-zinc-400 mb-1">
+                <MapIcon size={14} />
+                <span className="text-xs uppercase tracking-wider">Map</span>
+              </div>
+              <p className="font-medium text-white">{status.map}</p>
+            </div>
+
+            <div className="bg-zinc-950/50 rounded-lg p-3 border border-zinc-800/50">
+              <div className="flex items-center gap-2 text-zinc-400 mb-1">
+                <Users size={14} />
+                <span className="text-xs uppercase tracking-wider">Players</span>
+              </div>
+              <p className="font-medium text-white">{status.players} <span className="text-zinc-600">/</span> {status.maxPlayers}</p>
+            </div>
+          </div>
         </div>
       )}
-    </div>
-  );
-}
-
-// Helper component for styled status items
-function StatusItem({ label, value, spanFull = false }: { label: string, value: string | number, spanFull?: boolean }) {
-  return (
-    <div className={`${spanFull ? 'col-span-2' : ''}`}>
-      <p className="text-zinc-500">{label}</p>
-      <p className="text-white font-medium">{value}</p>
     </div>
   );
 }

@@ -9,7 +9,6 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "gamedig": "^5.3.2",
     "lucide-react": "^0.556.0",
     "next": "16.0.7",
     "react": "19.2.0",
@@ -18,7 +17,6 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
-    "@types/gamedig": "^5.0.3",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
