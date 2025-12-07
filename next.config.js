@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Your existing 'images' configuration
   images: {
     remotePatterns: [
       {
@@ -16,6 +17,16 @@ const nextConfig = {
       },
     ],
   },
+  
+  // ------------------------------------------------------------------
+  // ✅ FIX: ADD THIS SECTION TO RESOLVE TURBOPACK/GAMEDIG BUILD FAILURE
+  // ------------------------------------------------------------------
+  experimental: {
+    // This instructs Next.js to treat the 'gamedig' module as an external dependency 
+    // that should NOT be bundled by Turbopack, thus resolving the dynamic import error.
+    serverComponentsExternalPackages: ['gamedig'],
+  },
+  // ------------------------------------------------------------------
 };
 
 module.exports = nextConfig;
