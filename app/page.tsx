@@ -14,7 +14,7 @@ export default function HomePage() {
         </p>
       </div>
 
-      <div className="w-full max-w-lg">
+      <div className="max-w-lg **mx-auto**">
         <ServerStatus />
       </div>
 
