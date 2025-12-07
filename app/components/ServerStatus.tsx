@@ -55,7 +55,7 @@ export default function ServerStatus() {
         <button 
           onClick={fetchStatus} 
           disabled={loading}
-          className="p-2 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors"
+          className="p-2 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors hover:cursor-pointer"
         >
           <RefreshCw size={18} className={loading ? "animate-spin" : ""} />
         </button>
