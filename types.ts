@@ -2,10 +2,12 @@
 export interface StaffTransfer {
   steamid: string;
   profile: string; // URL to avatar
-  name: string;
-  rank: string;
+  name: string;    // Fetched Steam name
+  rank: string;    // Hardcoded rank
 }
 
-export interface ApiData {
-  staff: StaffTransfer[];
+// Interface for the minimal list we will manually define
+export interface HardcodedStaff {
+  steamid: string;
+  rank: string;
 }
