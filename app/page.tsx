@@ -26,7 +26,7 @@ export default function HomePage() {
           Read Rules
         </Link>
         <Link 
-          href="https://discord.gg/KxQ3KDb6K2" // Replace with actual discord link
+          href="https://discord.gg/KxQ3KDb6K2"
           target="_blank"
           className="px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md font-semibold transition-colors"
         >
